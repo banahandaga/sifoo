@@ -1,0 +1,433 @@
+{% extends 'adminpage/layout/base.html' %}
+{% load adminpage_tags %}
+{% load hijack %}
+
+{% block content %}
+  <div class="page-content container">
+    <div class="page-header border-0 pb-3">
+      <h1 class="page-title text-primary-d2 text-150">
+        {{ request.path|getUrlSegment:2 }}
+        <small class="page-info text-secondary-d2 text-nowrap">
+          <i class="fa fa-angle-double-right text-80"></i>
+          {{ request.path|getUrlSegment:3 }}
+        </small>
+      </h1>
+
+      <div class="page-tools mt-3 mt-sm-0 mb-sm-n1">
+        <!-- dataTables search box will be inserted here dynamically -->
+      </div>
+    </div>
+
+
+    <div class="card bcard h-auto">
+
+        <table id="datatable" class="d-style w-100 table text-dark-m1 text-95 border-y-1 brc-black-tp11 collapsed dtr-table">
+          <!-- add `collapsed` by default ... it will be removed by default -->
+          <!-- thead with .sticky-nav -->
+          <thead class="sticky-nav text-secondary-m1 text-uppercase text-85">
+            <tr>
+              <th class="td-toggle-details border-0 bgc-white shadow-sm">
+                <i class="fa fa-angle-double-down ml-2"></i>
+              </th>
+
+              <th class="border-0 bgc-white pl-3 pl-md-4 shadow-sm">
+                <input type="checkbox" />
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                No
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Name / Username
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Role
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Email
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Is Active
+              </th>
+
+              <th class="border-0 bgc-white bgc-h-yellow-l3 shadow-sm">
+                Action
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="pos-rel">
+            {% if dataaccounts %}
+            {% for data in dataaccounts %}
+            <tr class="d-style bgc-h-default-l4">
+              <td class="td-toggle-details pos-rel">
+                <!-- this empty table cell will show the `+` sign which toggles the hidden cells in responsive (collapsed) mode -->
+
+                <div class="position-lc h-95 ml-1px border-l-3 brc-purple-m1">
+                  <!-- this decorative highlight border will be shown only when table is collapsed (responsive) -->
+                </div>
+              </td>
+
+              <td class="pl-3 pl-md-4 align-middle pos-rel">
+                <input type="checkbox" value="{{ data.id }}" />
+                <div class="d-n-collapsed position-lc h-95 ml-1px border-l-3 brc-purple-m1">
+                  <!-- this decorative highlight border will be shown only when table is in full mode (not collapsed >> .d-n-collapsed) -->
+                </div>
+              </td>
+
+              <td class="align-middle">
+                {{ forloop.counter }}
+              </td>
+
+              <td class="align-middle text-secondary-d2 ">
+                <div class="d-flex align-items-start">
+                  <span class="d-inline-block text-center">
+                    <img alt="Image" src="{{ data.profile.image_url }}" class="radius-round border-2 p-2px brc-default-m1 mr-2 w-6 h-6">
+                  </span>
+
+                  <div class="mx-2 text-grey-d1">
+                    <div class="text-600 text-blue-d1">
+                      {{ data.get_full_name }}
+                    </div>
+                    {{ data.username }}
+                  </div>
+                </div>
+              </td>
+
+              <td class="align-middle">
+                {% if data.groups %}
+
+                {% for group in data.groups.all %}
+                <span class="m-1 badge bgc-white border-1 brc-pink-m2 btn-text-pink px-25">{{group.name|upper}}</span>
+                {% endfor %}
+
+                {% if not data.groups.all %}
+                <span class="text-125">-</span>
+                {% endif %}
+
+                {% endif %}
+              </td>
+
+              <td class="align-middle">
+                {{ data.email }}
+              </td>
+
+              <td class="align-middle">
+                {% if data.is_active %}
+                <span class="badge bgc-white border-2 brc-green text-dark-tp3 badge-pill badge-lg pb-4 px-3 bgc-h-green-l3">
+                  <span class="d-inline-block bgc-green radius-1 p-1 align-middle mr-1"></span> True
+                </span>
+                {% else %}
+                <span class="badge bgc-white border-2 brc-red text-dark-tp3 badge-pill badge-lg pb-4 px-3 bgc-h-red-l3">
+                  <span class="d-inline-block bgc-red radius-1 p-1 align-middle mr-1"></span> False
+                </span>
+                {% endif %}
+              </td>
+
+              <td class="align-middle">
+                <div class="d-flex">
+                  <span class="d-lg-inline mx-1">
+                    <a href="{% url 'adminpage:account_edit' data.id %}" data-action="edit">
+                      <button type="button" data-rel="tooltip" data-action="edit" title="Edit" class="btn btn-outline-info shadow-sm btn-bgc-white">
+                          <i class="fas fa-pen-to-square text-100"></i>
+                      </button>
+                    </a>
+                  </span>
+
+                  <span class="d-lg-inline mx-1">
+                    <a data-action="delete" onclick="delete_list(`{% url 'adminpage:account_deletelist' %}`, '{{ data.id }}' )">
+                      <button type="button" data-rel="tooltip" data-action="delete" title="Delete" class="btn btn-outline-danger shadow-sm btn-bgc-white">
+                          <i class="fas fa-trash-can text-100"></i>
+                      </button>
+                    </a>
+                  </span>
+
+                  {% if request.user.is_superuser and request.user|can_hijack:request.user %}
+                  <span class="d-lg-inline mx-1">
+                    <form action="{% url 'hijack:acquire' %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="user_pk" value="{{ data.id }}">
+                      <input type="hidden" name="next" value="{% url 'adminpage:dashboard' %}">
+                      <button type="submit" data-rel="tooltip" data-action="hijack" title="HIJACK" class="btn btn-outline-purple shadow-sm btn-bgc-white">
+                          <i class="fa-solid fa-user-secret text-100"></i>
+                      </button>
+                    </form>
+                  </span>
+                  {% endif %}
+
+                </div>
+              </td>
+
+            </tr>
+            {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+
+    </div>
+
+  </div>
+
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+  
+  function set_isactive(url, list_id, isactive){
+    let msg = 'Choose items to non activation'
+    if (isactive > 0) {
+      msg = 'Choose items to activation'
+    }
+    if (list_id === undefined || list_id.length == 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: msg
+      })
+    } else {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+      }).then((result) => {
+        if (result.value) {
+
+          const form = document.createElement('form');
+          form.method = 'post';
+          form.action = url;
+          
+          const params = { 
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'list_id': list_id,
+          }
+
+          for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+              if (key == 'list_id'){
+                for (let i = 0; i < params[key].length; i++) {
+                  const hiddenField = document.createElement('input');
+                  hiddenField.type = 'hidden';
+                  hiddenField.name = key;
+                  hiddenField.value = params[key][i];
+                  form.appendChild(hiddenField);
+                }
+              } else {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+                form.appendChild(hiddenField);
+              }
+            }
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+
+        }
+      });
+    }
+  }
+
+  $(document).ready(function(){
+    var tableId = '#datatable'
+
+    $.extend( true, $.fn.dataTable.defaults, {
+      dom:
+        "<'row'<'col-12 col-sm-6'l><'col-12 col-sm-6 text-right table-tools-col'f>>" +
+        "<'row'<'col-12'tr>>" +
+        "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
+      renderer: 'bootstrap'
+    })
+    
+    var $_table = $(tableId).DataTable({
+      responsive: true,
+    
+      classes: {
+        sLength: "dataTables_length text-left w-auto",
+      },
+
+      buttons: {
+        dom: {
+          button: {
+            className: 'btn' //remove the default 'btn-secondary'
+          },
+          container: {
+            className: 'dt-buttons btn-group bgc-white-tp2 text-right w-auto'
+          }
+        },
+
+        buttons: [
+          {
+            "extend": "colvis",
+            "text": "<i class='far fa-eye text-125 text-dark-m2' data-toggle='tooltip' title='Show/hide columns'></i> <span class='d-none'>Show/hide columns</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary",
+            columns: ':not(:first)'
+          },
+          {
+            "extend": "copy",
+            "text": "<i class='far fa-copy text-125 text-purple' data-toggle='tooltip' title='Copy to clipboard'></i> <span class='d-none'>Copy to clipboard</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "csv",
+            "text": "<i class='fa fa-database text-125 text-success-m1' data-toggle='tooltip' title='CSV'></i> <span class='d-none'>Export to CSV</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "excel",
+            "text": "<i class='far fa-file-excel text-125 text-success-m1' data-toggle='tooltip' title='Excel'></i> <span class='d-none'>Export to Excel</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+          {
+            "extend": "print",
+            "text": "<i class='fa fa-print text-125 text-orange-d1' data-toggle='tooltip' title='Print'></i> <span class='d-none'>Print</span>",
+            "className": "btn-light-default btn-bgc-white  btn-h-outline-primary btn-a-outline-primary",
+            autoPrint: false,
+            message: 'This print was produced using the Print button for DataTables'
+          }	,
+          {
+            "extend": "pdf",
+            "text": "<i class='far fa-file-pdf text-125 text-danger-m1' data-toggle='tooltip' title='Export to PDF'></i> <span class='d-none'>Export to PDF</span>",
+            "className": "btn-light-default btn-bgc-white btn-h-outline-primary btn-a-outline-primary"
+          },
+        ]
+      },
+
+      
+      // multiple row selection
+      select: {
+        style: 'multis'
+      },
+
+      language: {
+        search: '<i class="fa fa-search pos-abs mt-2 pt-3px ml-25 text-blue-m2"></i>',
+        searchPlaceholder: " Search..."
+      }
+    })
+
+    
+    // specify position of table buttons
+    $('.table-tools-col' )
+    .append( $_table.buttons().container() )
+    // move searchbox into table header
+    .find('.dataTables_filter').appendTo('.page-tools').find('input').addClass('pl-45 radius-round').removeClass('form-control-sm')
+    // and add a "+" button
+    .end().append(`
+      <a href="{% url 'adminpage:account_add' %}">
+        <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-primary border-2 btn-sm ml-2" title="Sinkron">
+          <i class="fa fa-plus"></i>
+        </button>
+      </a>
+      <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-danger border-2 btn-sm ml-2" title="Delete" onclick="delete_list('{% url 'adminpage:account_deletelist' %}',get_list_id('${tableId}'))">
+        <i class="far fa-trash-alt"></i>
+      </button>
+      <div class="btn-group dropdown dd-backdrop dd-backdrop-none-md">
+        <button data-rel="tooltip" type="button" class="btn radius-round btn-outline-warning border-2 btn-sm ml-2 dropdown-toggle" data-display="static" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Active/NonActive">
+        <i class="fas fa-user-check"></i>
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right dropdown-caret dropdown-animated animated-2 dd-slide-up dd-slide-none-md">
+          <div class="dropdown-inner">
+            <a class="dropdown-item" onclick="set_isactive('{% url 'adminpage:account_setisactive' 'active' %}',  get_list_id('${tableId}'),  1)">Active</a>
+            <a class="dropdown-item" onclick="set_isactive('{% url 'adminpage:account_setisactive' 'nonactive' %}',  get_list_id('${tableId}'),  0)">NonActive</a>
+          </div>
+        </div>
+      </div>
+    `)
+
+
+    // helper methods to add/remove bgc-h-* class when selecting/deselecting rows
+    var _highlightSelectedRow = function(row) {
+      row.querySelector('input[type=checkbox]').checked = true
+      row.classList.add('bgc-success-l3')
+      row.classList.remove('bgc-h-default-l4')
+    }
+    var _unhighlightDeselectedRow = function(row) {
+      row.querySelector('input[type=checkbox]').checked = false
+      row.classList.remove('bgc-success-l3')
+      row.classList.add('bgc-h-default-l4')
+    }
+
+    // listen to select/deselect event to highlight rows
+    $_table.on('select', function (e, dt, type, index) {
+      if ( type == 'row' ) {
+        var row = $_table.row( index ).node()
+        _highlightSelectedRow(row)
+      }
+    }).on('deselect', function (e, dt, type, index) {
+      if ( type == 'row' ) {
+        var row = $_table.row( index ).node()
+        _unhighlightDeselectedRow(row)
+      }
+    })
+
+    // when clicking the checkbox in table header, select/deselect all rows
+    $(tableId).on('click', 'th input[type=checkbox]', function () {
+      if(this.checked) {
+        $_table.rows({ search: 'applied' }).select().every(function() {
+          _highlightSelectedRow(this.node())
+        });
+      }
+      else {
+        $_table.rows({ search: 'applied' }).deselect().every(function() {
+          _unhighlightDeselectedRow(this.node())
+        })
+      }
+    })
+
+    // don't select row if we click on the "show details" `plus` sign (td)
+    $(tableId).on('click', 'td.dtr-control', function (e) {
+      e.stopPropagation()
+    })
+
+
+    // add/remove bgc-h-* class to TH when soring columns
+    var previousTh = null
+    var toggleTH_highlight = function(th) {
+      th.classList.toggle('bgc-yellow-l2')
+      th.classList.toggle('bgc-h-yellow-l3')
+      th.classList.toggle('text-blue-d2')
+    }
+
+    $(tableId).on('click', 'th:not(.sorting_disabled)', function () {
+      if(previousTh != null) toggleTH_highlight(previousTh)// unhighlight previous TH
+      toggleTH_highlight(this)
+      previousTh = this
+    })
+
+    // don't select row when clicking on the edit icon
+    $('a[data-action=edit], a[data-action=delete], a[data-action=hijack]').on('click', function(e) {
+      // e.preventDefault()
+      e.stopPropagation()// don't select
+    })
+
+    // add a dark border
+    $('.dataTables_wrapper').addClass('border-b-1 border-x-1 brc-default-l2')
+    // highlight DataTable header
+    // also already done in CSS, but you can use custom colors here
+    .find('.row:first-of-type')
+    .addClass('border-b-1 brc-default-l3 bgc-blue-l4')
+    .next().addClass('mt-n1px')// move the next `.row` up by 1px to go below header's border
+    
+    // highlight DataTable footer
+    $('.dataTables_wrapper').find('.row:last-of-type').addClass('border-t-1 brc-default-l3 mt-n1px bgc-default-l4')
+
+
+    // if the table has scrollbars, add ace styling to it
+    $('.dataTables_scrollBody').aceScroll({color: "grey"})
+
+
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% load static %}
+{% load adminpage_tags %}
+
+<div id="sidebar" class="sidebar sidebar-white sidebar-fixed sidebar-backdrop expandable {% if collapsed %}collapsed{% endif %}" data-swipe="true" data-dismiss="true">
+  <div class="sidebar-inner">
+
+    <!-- .navbar-brand inside sidebar, only show in desktop view -->
+    <div class="d-none d-xl-flex sidebar-section-item m-0 fadeable-left fadeable-top">
+      <div class="fadeinable">
+        <div class="py-2 mx-1 border-b-1 brc-secondary-l3" id="sidebar-header-brand1">
+          <a class="navbar-brand text-140">
+            <!-- <i class="fas fa-desktop text-success-m2"></i> -->
+            <img alt="LOGO" src="{{ APP_LOGO }}" class="mx-auto mr-1" width="40">
+          </a>
+        </div>
+      </div>
+
+      <div class="fadeable w-100 ">
+        <div class="py-2 text-center mx-3 border-b-1 brc-secondary-l3" id="sidebar-header-brand2">
+
+          <a class="navbar-brand ml-n3 text-140 text-grey-d2" href="{% url 'landingpage:home' %}">
+            <!-- <i class="fas fa-desktop mr-1 text-success-m2 text-105"></i> -->
+            <img alt="LOGO" src="{{ APP_LOGO }}" class="mx-auto mr-1" width="40"/>
+            <span class="align-middle text-600">{{ APP_SHORT_NAME }}</span>
+          </a>
+
+        </div>
+      </div>
+    </div><!-- /.sidebar-section-item  -->
+
+
+    <div class="pt-2 flex-grow-1 ace-scroll" data-ace-scroll="{}">
+      <!-- some part of sidebar header (brand) is outside scrollable area ^ -->
+      <div class="sidebar-section-item fadeable-left fadeable-top">
+        <div class="fadeinable">
+          <img alt="Image" src="{{ request.session.user.image }}" width="60%" class="p-2px border-2 brc-primary-tp2 radius-round" />
+        </div>
+
+        <div class="fadeable hideable">
+
+          <div class="py-2 d-flex flex-column align-items-center">
+            <div>
+              <img alt="Image" src="{{ request.session.user.image }}" width="100" class="p-2px border-2 brc-primary-tp2 radius-round" />
+            </div>
+
+            <div class="text-center mt-1" id="id-user-info">
+              <a href="#id-user-menu" class="d-style pos-rel collapsed text-blue-d2 accordion-toggle no-underline bgc-h-primary-l2 px-1 py-2px" data-toggle="collapse" aria-expanded="false">
+                <span class="text-95 font-bolder">{{ request.session.user.fullname|title }}</span>
+                <i class="fa fa-caret-down text-90 d-collapsed"></i>
+                <i class="fa fa-caret-up text-90 d-n-collapsed"></i>
+              </a>
+              <div class="row text-80 px-3 justify-content-center" id="info_jabatan">
+                {% if request.session.user.is_superuser %}
+                  <span class="m-1 badge bgc-white border-1 brc-pink-m2 btn-text-pink px-25">SUPER USER</span>
+                {% elif request.session.user.is_staff %}
+                  <span class="m-1 badge bgc-white border-1 brc-pink-m2 btn-text-pink px-25">STAFF</span>
+                {% endif %}
+
+                {% if request.session.user.groups %}
+                  {% for group in request.session.user.groups %}
+                    <span class="m-1 badge bgc-white border-1 brc-purple-m2 btn-text-purple px-25">{{ group|upper }}</span>
+                  {% endfor %}
+                {% elif not request.session.user.is_superuser and not request.session.user.is_staff %}
+                  <span class="m-1 badge bgc-white border-1 brc-purple-m2 btn-text-purple px-25">You Don't Have Any Role</span>
+                {% endif %}
+              </div>
+            </div><!-- /#id-user-info -->
+
+            <div class="collapse" id="id-user-menu">
+              <div class="mt-3">
+                <a class="btn btn-light-blue btn-brc-white btn-h-light-blue radius-round py-2 px-1 border-2 shadow-sm">
+                  <i class="fa fa-envelope w-4 text-110 text-blue-d1"></i>
+                </a>
+
+                <a class="btn btn-light-blue btn-brc-white btn-h-light-blue radius-round py-2 px-1 border-2 shadow-sm">
+                  <i class="fa fa-users w-4 text-110 text-blue-d1"></i>
+                </a>
+
+                <a class="btn btn-light-blue btn-brc-white btn-h-light-blue radius-round py-2 px-1 border-2 shadow-sm">
+                  <i class="fa fa-star w-4 text-110 text-blue-d1"></i>
+                </a>
+              </div>
+            </div><!-- /.collapse -->
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+      <!-- optional `nav` tag -->
+      <nav aria-label="Main">
+        <ul class="nav flex-column mt-2 has-active-border">
+
+          <li class="nav-item {{ request.path|setactive:'adminpage:dashboard' }}">
+            <a href="{% url 'adminpage:dashboard' %}" class="nav-link">
+              <i class="nav-icon fa fa-tachometer-alt nav-icon-round bgc-primary-tp1"></i>
+              <span class="nav-text fadeable">
+                <span>Dashboard</span>
+              </span>
+            </a>
+            <b class="sub-arrow"></b>
+          </li>
+
+          
+          {% if request.user|has_group:'admin' %}
+            <li class="nav-item-caption">
+              <span class="fadeable pl-3">Menu Admin</span>
+              <span class="fadeinable mt-n2 text-125">…</span>        
+            </li>
+
+            <li class="nav-item {{ request.path|setactiveopen:'/adminpage/account' }}">
+              <a  class="nav-link dropdown-toggle collapsed">
+                <i class="nav-icon fa-solid fa-user-gear nav-icon-round bgc-purple-tp1"></i>
+                <span class="nav-text fadeable">
+                  <span>Account</span>
+                </span>
+
+                <b class="caret fa fa-angle-left rt-n90"></b>
+              </a>
+
+              <div class="hideable submenu collapse {{ request.path|setshow:'/adminpage/account' }}">
+                <ul class="submenu-inner">
+
+                  <li class="nav-item {{ request.path|setactive:'adminpage:account_table' }}">
+                    <a href="{% url 'adminpage:account_table' %}" class="nav-link">
+                      <span class="nav-text">
+                        <span>Table</span>
+                      </span>
+                    </a>
+                  </li>
+
+                  <li class="nav-item {{ request.path|setactive:'adminpage:account_role' }}">
+                    <a href="{% url 'adminpage:account_role' %}" class="nav-link">
+                      <span class="nav-text">
+                        <span>Role</span>
+                      </span>
+                    </a>
+                  </li>
+
+                  <li class="nav-item {{ request.path|setactive:'adminpage:account_add' }}">
+                    <a href="{% url 'adminpage:account_add' %}" class="nav-link">
+                      <span class="nav-text">
+                        <span>Add</span>
+                      </span>
+                    </a>
+                  </li>
+
+                </ul>
+              </div>
+
+              <b class="sub-arrow"></b>
+            </li>
+
+            <li class="nav-item {{ request.path|setactiveopen:'/adminpage/category' }}">
+              <a  class="nav-link dropdown-toggle collapsed">
+                <i class="nav-icon fas fa-tags nav-icon-round bgc-green-tp1"></i>
+                <span class="nav-text fadeable">
+                  <span>Category</span>
+                </span>
+
+                <b class="caret fa fa-angle-left rt-n90"></b>
+              </a>
+
+              <div class="hideable submenu collapse {{ request.path|setshow:'/adminpage/category' }}">
+                <ul class="submenu-inner">
+
+                  <li class="nav-item {{ request.path|setactive:'adminpage:category_table' }}">
+                    <a href="{% url 'adminpage:category_table' %}" class="nav-link">
+                      <span class="nav-text">
+                        <span>Table</span>
+                      </span>
+                    </a>
+                  </li>
+
+
+                  <li class="nav-item {{ request.path|setactive:'adminpage:category_add' }}">
+                    <a href="{% url 'adminpage:category_add' %}" class="nav-link">
+                      <span class="nav-text">
+                        <span>Add</span>
+                      </span>
+                    </a>
+                  </li>
+
+                </ul>
+              </div>
+
+              <b class="sub-arrow"></b>
+
+            </li>
+          {% endif %}
+
+        </ul>
+      </nav>
+
+    </div><!-- /.ace-scroll -->
+
+
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-item fadeable-left fadeable-top">
+        <div id="sidebar-footer" class="fadeable text-center border-t-1 brc-secondary-l3 w-95">
+          <div class="py-2">
+            <a href="{% url 'landingpage:home' %}">
+              <button type="button" class="btn btn-primary px-5 btn-bold radius-1">
+                <i class="nav-icon fas fa-house mr-1"></i>
+                Home
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</div>

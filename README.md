@@ -1,6 +1,3 @@
-# sifoo
-PTMA with django
-
 
 <div align="center">
   <h1 align="center">

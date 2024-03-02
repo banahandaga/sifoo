@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    {% include 'adminpage/layout/head.html' %}
+    {% block head %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="body-container">
+      <div class="main-container">
+
+        {% include 'adminpage/layout/sidebar.html' %}
+
+        <div role="main" class="main-content">
+          {% include 'adminpage/layout/navbar.html' %}
+
+          {% block content %}{% endblock %}
+
+          {% include 'adminpage/layout/footer.html' %}
+        </div>
+
+      </div>
+    </div>
+    
+    
+    {% include 'adminpage/layout/javascript.html' %}
+
+    
+    {% block javascript %}{% endblock %}
+  </body>
+
+</html>

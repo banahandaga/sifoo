@@ -15,12 +15,5 @@ django-cas-ng==5.0.0
 PyJWT==2.6.0
 
 python-decouple==3.8 # to read .env file files
-# psycopg2==2.9.6 # production for postgresql database
+psycopg2==2.9.6 # production for postgresql database
 mysqlclient==2.1.1 # development for mysql database
-
-django-crispy-forms==2.0
-crispy-bootstrap4==2022.1
-
-XlsxWriter==3.2.0
-openpyxl==3.1.2
-qrcode==7.4.2
