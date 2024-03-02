@@ -1,0 +1,41 @@
+# RENAME THIS FILE INTO .gitlab-ci.yml
+# CHANGE VALUE ACCORDING TO NEED
+
+variables:
+  URL: 'WRITE REPOSITORY URL HERE'
+
+
+stages:
+  - build
+  - update
+
+
+before_script:
+  - echo "GETTING STARTED STAGE..."
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+after_script:
+  - docker push $URL
+  - echo "COMPLETE STAGE..."
+
+
+Update Image:
+  stage: build
+  script:
+    - docker build -t $URL .
+  only:
+    changes:
+      - docs/requirements.txt
+
+Update App:
+  stage: update
+  script:    
+    - docker pull $URL
+    - docker create --name temp_container $URL
+    - docker cp project/. temp_container:/home/app/webapp/
+    - docker cp docs/requirements.txt temp_container:/home/app/webapp/
+    - docker commit temp_container $URL
+    - docker container rm temp_container
+  only:
+    refs:
+      - main

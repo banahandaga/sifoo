@@ -1,0 +1,9 @@
+1. Buka CMD
+2. Ketik 'ipconfig'
+3. Cek pada menu 'Ethernet adapter Ethernet:'
+4. Copy IPv4 Address
+5. Ubah DB_HOST pada .env menjadi ip yang sudah di copy
+6. Beri akses pada MySQL(Phpmyadmin) ketik query berikut :
+7. GRANT ALL ON *.* to root@'10.1.1.194' IDENTIFIED BY 'password';
+8. Ganti IP pada query diatas sesuai dengan IP PC
+9. Buka file .env ubah DB_PASSWORD menjadi 'password' sesuai query diatas

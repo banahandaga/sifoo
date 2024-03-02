@@ -1,0 +1,9 @@
+1. Masuk ke env ketik 'env/scripts/activate'
+2. Ketik perintah berikut pada terminal :
+
+python -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
+python -Bc "import pathlib; [p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]"
+python -Bc "for p in __import__('pathlib').Path('.').rglob('*.py[co]'): p.unlink()"
+python -Bc "for p in __import__('pathlib').Path('.').rglob('__pycache__'): p.rmdir()"
+
+3. Hapus seluruh folder migrations di setiap apps

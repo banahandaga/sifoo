@@ -1,0 +1,8 @@
+Path: project/static/template/node_modules
+
+Pada template bawaan ACE Admin belum terdapat library dibawah, maka pada project ini sudah ditambahkan
+- @fontawesome
+- select2-bootstrap4-theme
+- tempusdominus-bootstrap-4
+- jszip
+- pdfmake

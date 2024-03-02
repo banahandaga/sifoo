@@ -1,1 +1,11 @@
 .venv
+.env
+env/
+venv/
+__pycache__/
+# migrations/
+
+project/media/*
+token/
+token.json
+.vscode
