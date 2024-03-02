@@ -93,8 +93,10 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-       'ENGINE'     : config('DB_ENGINE',   default='django.db.backends.postgresql'),
-       'NAME'       : config('DB_NAME',     default='YOUR_DB_NAME'),
+       # 'ENGINE'     : config('DB_ENGINE',   default='django.db.backends.postgresql'),
+       # 'NAME'       : config('DB_NAME',     default='YOUR_DB_NAME'),
+       'ENGINE'     : config('DB_ENGINE',   default='django.db.backends.sqlite3'),
+       'NAME'       : config('DB_NAME',     default='myDB.db'),
        'USER'       : config('DB_USER',     default='YOUR_DB_USER'),
        'PASSWORD'   : config('DB_PASSWORD', default='YOUR_DB_PASSWORD'),
        'HOST'       : config('DB_HOST',     default='127.0.0.1'),
