@@ -169,15 +169,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # =====================================================================================================
 
 # =======[App Info]======
-APP_SHORT_NAME          = 'PIONS'
-APP_FULL_NAME           = 'Project Information System'
+APP_SHORT_NAME          = 'PD-PTMA'
+APP_FULL_NAME           = 'Pangkalan Data PTMA'
 APP_VERSION             = 'v1.0'
-APP_YEAR                = '2023'
+APP_YEAR                = '2024'
 APP_DEVELOPER           = 'BTI'
-APP_COMPANY_SHORT_NAME  = 'UMS'
-APP_COMPANY_FULL_NAME   = 'Universitas Muhammadiyah Surakarta'
-APP_LOGO                = os.path.join(STATIC_URL,'images/logo/ums_logo_color.svg')
-APP_FAVICON             = os.path.join(STATIC_URL,'images/logo/ums_logo_favicon.ico')
+APP_COMPANY_SHORT_NAME  = 'Diktilitbang'
+APP_COMPANY_FULL_NAME   = 'Majelis Diktilitbang PP Muhammadiyah'
+APP_LOGO                = os.path.join(STATIC_URL,'images/logo/logo_dikti2x.png')
+APP_LOGO_WHITE          = os.path.join(STATIC_URL,'images/logo/logo_dikti2x.png')
+APP_LOGO_RED            = os.path.join(STATIC_URL,'images/logo/logo_dikti_maroon.png')
+APP_FAVICON             = os.path.join(STATIC_URL,'images/logo/logo_dikti_maroon.png')
 APP_BASE_URL            = config('APP_BASE_URL', default='') # for email verify
 
 

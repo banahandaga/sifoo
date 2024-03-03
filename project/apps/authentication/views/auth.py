@@ -19,7 +19,9 @@ from apps.services.utils import send_otp_by_email, username_in_cas
 @isloggedin('adminpage:dashboard')
 def signin(request):
     context = {}
+    context['APP_LOGO_RED'] = settings.APP_LOGO_RED
     context['formsignin'] = FormSignIn(request, data=request.POST or None)
+
 
     if request.POST:
         if context['formsignin'].is_valid():
@@ -45,7 +47,6 @@ def signin(request):
         else:
             messages.error(request, context['formsignin'].errors.get_json_data()['__all__'][0]['message'])
     
-
     return render(request, 'authentication/signin.html', context)
 
 
@@ -53,6 +54,7 @@ def signin(request):
 @isloggedin('adminpage:dashboard')
 def signup(request):
     context = {}
+    context['APP_LOGO_RED'] = settings.APP_LOGO_RED
     context['formsignup'] = FormSignUp(request.POST or None)
 
     if request.POST:
@@ -97,6 +99,7 @@ def forgot(request):
         return redirect('authentication:forgot')
 
     context = {}
+    context['APP_LOGO_RED'] = settings.APP_LOGO_RED
     return render(request, 'authentication/forgot.html', context)
 
 

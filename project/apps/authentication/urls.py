@@ -7,7 +7,8 @@ app_name = 'authentication'
 
 urlpatterns = [
   path('signin',      auth.signin,                               name='signin'),
-  path('signout',     django_cas_ng.views.LogoutView.as_view(),  name='signout'),
+  # path('signout',     django_cas_ng.views.LogoutView.as_view(),  name='signout'),
+  path('signout',     auth.signout,  name='signout'),
   path('signup',      auth.signup,                               name='signup'),
   path('forgot',      auth.forgot,                               name='forgot'),
   path('verify',      auth.verify,                               name='verify'),
