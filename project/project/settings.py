@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.landingpage',
     'apps.authentication',
     'apps.adminpage',
+    'capps.pd',
 ]
 
 MIDDLEWARE = [
@@ -93,14 +94,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-       # 'ENGINE'     : config('DB_ENGINE',   default='django.db.backends.postgresql'),
-       # 'NAME'       : config('DB_NAME',     default='YOUR_DB_NAME'),
        'ENGINE'     : config('DB_ENGINE',   default='django.db.backends.sqlite3'),
        'NAME'       : config('DB_NAME',     default='myDB.db'),
-       'USER'       : config('DB_USER',     default='YOUR_DB_USER'),
-       'PASSWORD'   : config('DB_PASSWORD', default='YOUR_DB_PASSWORD'),
-       'HOST'       : config('DB_HOST',     default='127.0.0.1'),
-       'PORT'       : config('DB_PORT',     default='5432', cast=int),
+       'USER'       : config('DB_USER',     default='-'),
+       'PASSWORD'   : config('DB_PASSWORD', default='-'),
+       'HOST'       : config('DB_HOST',     default='-'),
+       'PORT'       : config('DB_PORT',     default='3306', cast=int),
     }
 }
 
