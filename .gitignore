@@ -1,11 +1,12 @@
 .venv/
-.env
+# .env
 env/
 venv/
 __pycache__/
 # migrations/
 
 project/media/*
+project/myDB.db
 token/
 token.json
 .vscode
