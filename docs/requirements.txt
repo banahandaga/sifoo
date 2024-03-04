@@ -12,8 +12,8 @@ django-cas-ng==5.0.0
 
 
 #PyJWT is a Python library which allows you to encode and decode JSON Web Tokens (JWT). JWT is an open, industry-standard (RFC 7519) for representing claims securely between two parties.
-PyJWT==2.6.0
+PyJWT==2.7.0
 
 python-decouple==3.8 # to read .env file files
-psycopg2==2.9.6 # production for postgresql database
+# psycopg2==2.9.6 # production for postgresql database
 mysqlclient==2.1.1 # development for mysql database
